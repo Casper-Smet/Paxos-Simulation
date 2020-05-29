@@ -25,16 +25,17 @@ class Message(object):
         self.type = type_
 
     def __repr__(self):
-        """__repr__ for Message object.
+        """__repr__ implementation for Message object.
 
-        :return: [description]
-        :rtype: [type]
+        :return: Text representation of Message object
+        :rtype: string
         """
         return f"{self.src}-{self.dst}-{self.type}"
 
     def __str__(self):
-        """__str__ for Message object.
+        """__str__ implementation for Message object.
         
-        :return: [description]
-        :rtype: [type]"""
+        :return: Text representation of Message object
+        :rtype: string
+        """
         return f"{self.src}-{self.dst}-{self.type}"
