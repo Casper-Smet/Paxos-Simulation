@@ -1,3 +1,6 @@
+from message import Message
+
+
 class Computer(object):
     """Computer class for Paxos simulation."""
 
@@ -8,6 +11,14 @@ class Computer(object):
         """Initialiser for Computer class."""
         self.number = number
         self.failed = failed
+
+    def deliver_message(self, m: Message):
+        """[summary]
+
+        :param m: [description]
+        :type m: Message
+        """
+        pass
 
 
 class Proposer(Computer):
