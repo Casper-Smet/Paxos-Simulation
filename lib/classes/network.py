@@ -9,14 +9,19 @@ class Network(object):
         self.q = []
 
     def queue_message(self, m: Message):
-        """Adds Message m to back of queue
+        """Adds Message m to back of queue.
 
         :param m: Message
         :type m: Message
         """
         self.q.append(m)
         return self.q
+    
+    def is_empty(self):
+        """Checks if queue is empty.
+        """
+        return len(self.q) == 0
 
     def extract_message(self):
-        """Returns first item from queue"""
-        return self.q.pop(0) if len(self.q) > 0 else None
+        """Returns first item from queue."""
+        return self.q.pop(0) if not self.is_empty() else None
