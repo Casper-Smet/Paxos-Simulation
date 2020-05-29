@@ -33,7 +33,7 @@ class Message(object):
         :return: Text representation of Message object
         :rtype: string
         """
-        return f"{self.src}-{self.dst}-{self.type}"
+        return f"{self.src} -> {self.dst} {self.type}"
 
     def __str__(self):
         """__str__ implementation for Message object.
@@ -41,4 +41,4 @@ class Message(object):
         :return: Text representation of Message object
         :rtype: string
         """
-        return f"{self.src}-{self.dst}-{self.type}"
+        return f"{self.src} -> {self.dst} {self.type}"
