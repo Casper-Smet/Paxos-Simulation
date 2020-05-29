@@ -23,3 +23,18 @@ class Message(object):
         self.src = src
         self.dst = dst
         self.type = type_
+
+    def __repr__(self):
+        """__repr__ for Message object.
+
+        :return: [description]
+        :rtype: [type]
+        """
+        return f"{self.src}-{self.dst}-{self.type}"
+
+    def __str__(self):
+        """__str__ for Message object.
+        
+        :return: [description]
+        :rtype: [type]"""
+        return f"{self.src}-{self.dst}-{self.type}"
