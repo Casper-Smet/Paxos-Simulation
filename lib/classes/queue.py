@@ -14,9 +14,17 @@ class Queue(object):
         :param m: [description]
         :type m: Message
         """
-        pass
+        self.q.append(m)
+        return self.q
 
     def extract_message(self):
         """[summary]
         """
-        pass
+        return self.q.pop(0) if len(self.q) > 0 else None
+
+
+if __name__ == "__main__":
+    q = Queue()
+    q.queue_message(Message(1, 2, "PROPOSE"))
+    q.queue_message(Message(2, 1, "ACCEPTED"))
+    print(q.extract_message())
