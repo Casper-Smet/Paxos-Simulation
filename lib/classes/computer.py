@@ -1,4 +1,4 @@
-class Computer():
+class Computer(object):
     """Computer class for Paxos simulation."""
 
     acs = []
