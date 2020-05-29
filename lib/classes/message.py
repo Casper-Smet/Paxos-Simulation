@@ -9,7 +9,7 @@ class Message(object):
              "REJECTED",
              ]
 
-    def __init__(self, src, dst, type_):
+    def __init__(self, src, dst, type_, value):
         """Init for Message class.
 
         :param src: [description]
@@ -18,11 +18,14 @@ class Message(object):
         :type dst: [type]
         :param type_: [description]
         :type type_: [type]
+        :param value: [description]
+        :type  value: [type]
         """
         assert type_ in self.types, f"{type_} is not a valid message type"
         self.src = src
         self.dst = dst
         self.type = type_
+        self.value = value
 
     def __repr__(self):
         """__repr__ implementation for Message object.
