@@ -9,7 +9,7 @@ class Message(object):
              "REJECTED",
              ]
 
-    def __init__(self, src, dst, type_, value):
+    def __init__(self, src, dst, type_, value=None):
         """Init for Message class.
 
         :param src: [description]
@@ -33,7 +33,10 @@ class Message(object):
         :return: Text representation of Message object
         :rtype: string
         """
-        return f"{self.src} -> {self.dst} {self.type}"
+        return_str = f"{self.src} -> {self.dst} {self.type}"
+        if self.type == "PROPOSE":
+            return_str += f" v={self.value}"
+        return return_str
 
     def __str__(self):
         """__str__ implementation for Message object.
@@ -41,4 +44,7 @@ class Message(object):
         :return: Text representation of Message object
         :rtype: string
         """
-        return f"{self.src} -> {self.dst} {self.type}"
+        return_str = f"{self.src} -> {self.dst} {self.type}"
+        if self.type == "PROPOSE":
+            return_str += f" v={self.value}"
+        return return_str
