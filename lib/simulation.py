@@ -25,7 +25,7 @@ class Simulation:
         :yield: (ticks, Message, Failed computer, Recovered computer) describing event
         :rtype: (t, Message, F, R)
         """
-
+        # FIXME, skips 11 for some reason
         current_t = self.E[0].split(" ")[0]
         # Computers that fail this tick
         F = []
@@ -34,6 +34,16 @@ class Simulation:
         # Message that is sent during this tick
         message = None
         for t, msg_type, target, value in map(lambda row: row.split(" "), self.E):
+            if current_t != t:
+                # Yield message for generator
+                yield int(current_t), message, F, R
+                current_t = t
+                # Computers that fail this tick
+                F = []
+                # Computer that recover this tick
+                R = []
+                # Message that is sent during this tick
+                message = None
             # If the msg_type is PROPOSE, simply make a message
             if msg_type == "PROPOSE":
                 message = Message(
@@ -58,16 +68,7 @@ class Simulation:
             else:
                 print("Invalid message type")
                 pass
-            if current_t != t:
-                # Yield message for generator
-                yield int(current_t), message, F, R
-                current_t = t
-                # Computers that fail this tick
-                F = []
-                # Computer that recover this tick
-                R = []
-                # Message that is sent during this tick
-                message = None
+            
         yield int(current_t), message, F, R
 
     def run(self):
@@ -75,8 +76,10 @@ class Simulation:
         """
         events = self.parse_events()
         events_empty = False
-        
         tick, m, F, R = next(events)
+
+        
+        print(list(self.parse_events()))
         for t in range(self.tmax):
             if events_empty and self.network.is_empty():
                 # If events_empty is true, and the queue is empty, exit simulation
