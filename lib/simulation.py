@@ -2,9 +2,24 @@ from collections import defaultdict
 from classes.computer import Acceptor, Computer, Proposer, Network, Message
 
 
+def from_text(fp: str):
+    """Function for processing .txt files with Paxos instructions
+
+    :param fp: Filepath
+    :type fp: str
+    :return: n_p, n_a, tmax, E
+    :rtype: (int, int, int, list)
+    """
+    with open(fp, "r") as file:
+        lines = [line.strip() for line in file]
+
+    n_p, n_a, tmax = lines.pop(0).split(" ")
+    return int(n_p), int(n_a), int(tmax), lines[:-1]
+
+
 class Simulation:
 
-    def __init__(self, n_p, n_a, tmax, E):
+    def __init__(self, n_p: int, n_a: int, tmax: int, E: list):
         """[summary]
 
         Arguments:
@@ -118,9 +133,10 @@ class Simulation:
 
 
 if __name__ == "__main__":
-    input_ = ["0 PROPOSE 1 42",
-              "8 FAIL PROPOSER 1",
-              "11 PROPOSE 2 37",
-              "26 RECOVER PROPOSER 1"]
-    sim = Simulation(2, 3, 50, input_)
-    sim.run()
+    n_a1, n_p1, tmax1, E1 = from_text(r"test_input\01.txt")
+    sim1 = Simulation(n_a1, n_p1, tmax1, E1)
+    sim1.run()
+
+    n_a2, n_p2, tmax2, E2 = from_text(r"test_input\02.txt")
+    sim2 = Simulation(n_a2, n_p2, tmax2, E2)
+    sim2.run()
