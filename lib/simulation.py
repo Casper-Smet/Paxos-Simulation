@@ -32,6 +32,7 @@ class Simulation:
         """
         # Default dict with dict with keys m, RECOVER and FAIL
         tick_dict = defaultdict(lambda: {"m": None, "RECOVER": [], "FAIL": []})
+        # Loop through each row of input split with by spaces
         for t, msg_type, target, value in map(lambda row: row.split(" "), self.E):
             # Convert t from str to int
             t = int(t)
