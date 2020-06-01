@@ -99,7 +99,7 @@ class Simulation:
                 extracted_m = self.network.extract_message()
                 if extracted_m:
                     print(f"{t:03}: {extracted_m}")
-                    Computer.deliver_message(extracted_m.dst, extracted_m)
+                    extracted_m.dst.deliver_message(extracted_m)
                 else:
                     print(f"{t:03}:")
                     pass
@@ -108,7 +108,7 @@ class Simulation:
                 for c in F:
                     c.failed = True
                     print(f"{t:03}: ** {c} kapot **")
-                # Repair all computers that recovered during this tick
+                # Recover all computers that recovered during this tick
                 for c in R:
                     c.failed = False
                     print(f"{t:03}: ** {c} gerepareerd **")
@@ -116,13 +116,13 @@ class Simulation:
                 # If event has message, deliver message
                 if m:
                     print(f"{t:03}: {m}")
-                    Computer.deliver_message(m.dst, m)
+                    m.dst.deliver_message(m)
                 # Else, attempt to extract message from queue and deliver
                 else:
                     extracted_m = self.network.extract_message()
                     if extracted_m:
                         print(f"{t:03}: {extracted_m}")
-                        Computer.deliver_message(extracted_m.dst, extracted_m)
+                        extracted_m.dst.deliver_message(extracted_m)
 
                 try:
                     # Get next scripted event
@@ -133,10 +133,11 @@ class Simulation:
 
 
 if __name__ == "__main__":
-    n_a1, n_p1, tmax1, E1 = from_text(r"test_input\01.txt")
-    sim1 = Simulation(n_a1, n_p1, tmax1, E1)
-    sim1.run()
+    #TODO adding a global n somewhere
+    # n_a1, n_p1, tmax1, E1 = from_text(r"test_input\01.txt")
+    # sim1 = Simulation(n_a1, n_p1, tmax1, E1)
+    # sim1.run()
 
-    # n_a2, n_p2, tmax2, E2 = from_text(r"test_input\02.txt")
-    # sim2 = Simulation(n_a2, n_p2, tmax2, E2)
-    # sim2.run()
+    n_a2, n_p2, tmax2, E2 = from_text(r"test_input\02.txt")
+    sim2 = Simulation(n_a2, n_p2, tmax2, E2)
+    sim2.run()

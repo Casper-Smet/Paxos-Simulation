@@ -27,6 +27,7 @@ class Message(object):
         self.type = type_
         self.value = value
 
+    #TODO add n to print statement
     def __repr__(self):
         """__repr__ implementation for Message object.
 
@@ -38,6 +39,7 @@ class Message(object):
             return_str += f" v={self.value}"
         return return_str
 
+    #TODO add n to print statement
     def __str__(self):
         """__str__ implementation for Message object.
         

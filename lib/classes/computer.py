@@ -14,13 +14,13 @@ class Computer(object):
         self.network = network
 
     def deliver_message(self, m: Message):
-        """[summary]
+        """Abstract method
 
         :param m: Message
         :type m: Message
         """
         pass
-
+    
     def __str__(self):
         """__repr__ implementation for Message object.
 
@@ -48,6 +48,7 @@ class Proposer(Computer):
         """Initialiser for Proposer class."""
         super().__init__(*args, **kwargs)
         self.props.append(self)
+        self.value = None
 
     def deliver_message(self, m: Message):
         """[summary]
@@ -57,10 +58,13 @@ class Proposer(Computer):
         """
         if m.type == "PROPOSE":
             # 
-            pass
+            self.value = m.value
+            for accept_dest in self.acs:
+                self.network.queue_message(Message(self, accept_dest, "PREPARE"))
+
         elif m.type == "PROMISE":
             # 
-            pass
+            self.network.queue_message(Message(self, m.src, "ACCEPT", value=self.value))
         elif m.type == "ACCEPTED":
             # 
             pass
@@ -103,10 +107,15 @@ class Acceptor(Computer):
         """
         if m.type == "PREPARE":
             # 
-            pass
+            #TODO add check for prior
+            self.network.queue_message(Message(self, m.src, "PROMISE"))
         elif m.type == "ACCEPT":
             # 
-            pass
+            if 1:
+                # TODO check for correct n
+                self.network.queue_message(Message(self, m.src, "ACCEPTED", value=m.value))
+            else:
+                self.network.queue_message(Message(self, m.src, "REJECTED"))
 
     def __str__(self):
         """__repr__ implementation for Acceptor object.
