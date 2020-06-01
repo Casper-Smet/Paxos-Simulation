@@ -60,11 +60,11 @@ class Proposer(Computer):
             # The proposer gets a propose message
             self.value = m.value
             for accept_dest in self.acs:
-                self.network.queue_message(Message(self, accept_dest, "PREPARE"))
+                self.network.queue_message(Message(self, accept_dest, "PREPARE", 14))
 
         elif m.type == "PROMISE":
             # The proposer gets a promise message
-            self.network.queue_message(Message(self, m.src, "ACCEPT", value=self.value))
+            self.network.queue_message(Message(self, m.src, "ACCEPT", 14, value=self.value))
         elif m.type == "ACCEPTED":
             # The proposer gets an accepted message
             pass
@@ -108,16 +108,16 @@ class Acceptor(Computer):
         if m.type == "PREPARE":
             # The acceptor gets a prepare message
             #TODO add check for prior
-            self.network.queue_message(Message(self, m.src, "PROMISE"))
+            self.network.queue_message(Message(self, m.src, "PROMISE", 14))
         elif m.type == "ACCEPT":
             # The acceptor gets an accept message
             if 1:
                 # TODO check for correct n
-                self.network.queue_message(Message(self, m.src, "ACCEPTED", value=m.value))
+                self.network.queue_message(Message(self, m.src, "ACCEPTED", 14, value=m.value))
                 # update prior value
 
             else:
-                self.network.queue_message(Message(self, m.src, "REJECTED"))
+                self.network.queue_message(Message(self, m.src, "REJECTED", 14))
 
     def __str__(self):
         """__repr__ implementation for Acceptor object.

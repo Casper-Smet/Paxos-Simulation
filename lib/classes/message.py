@@ -9,7 +9,7 @@ class Message(object):
              "REJECTED",
              ]
 
-    def __init__(self, src, dst, type_, value=None):
+    def __init__(self, src, dst, type_, n, value=None):
         """Init for Message class.
 
         :param src: [description]
@@ -25,6 +25,7 @@ class Message(object):
         self.src = src
         self.dst = dst
         self.type = type_
+        self.n = n
         self.value = value
 
     #TODO add n to print statement
@@ -34,9 +35,17 @@ class Message(object):
         :return: Text representation of Message object
         :rtype: string
         """
+
         return_str = f"{self.src} -> {self.dst} {self.type}"
-        if self.type == "PROPOSE":
+        if self.type in "PROPOSE":
             return_str += f" v={self.value}"
+        else:
+            return_str += f" n={self.n}"
+            if self.type in ["ACCEPT", "ACCEPTED"]:
+                return_str += f" v={self.value}"
+            elif self.type == "PROMISE":
+                #TODO add prior to print statement
+                return_str += f" (Prior: n={14}, v={14})"
         return return_str
 
     #TODO add n to print statement
@@ -47,6 +56,13 @@ class Message(object):
         :rtype: string
         """
         return_str = f"{self.src} -> {self.dst} {self.type}"
-        if self.type == "PROPOSE":
+        if self.type in "PROPOSE":
             return_str += f" v={self.value}"
+        else:
+            return_str += f" n={self.n}"
+            if self.type in ["ACCEPT", "ACCEPTED"]:
+                return_str += f" v={self.value}"
+            elif self.type == "PROMISE":
+                #TODO add prior to print statement
+                return_str += f" (Prior: n={14}, v={14})"
         return return_str
