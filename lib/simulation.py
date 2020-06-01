@@ -1,3 +1,4 @@
+from collections import defaultdict
 from classes.computer import Acceptor, Computer, Proposer, Network, Message
 
 
@@ -12,44 +13,35 @@ class Simulation:
             tmax {[type]} -- [description]
             E {[type]} -- [description]
         """
+        # Make n_p Proposers
         self.P = [Proposer(i + 1) for i in range(n_p)]
+        # Make n_a Acceptors
         self.A = [Acceptor(i + 1) for i in range(n_a)]
+        # Simulation time limit
         self.tmax = tmax
+        # IO stream or list of strings with events
         self.E = E
 
         self.network = Network()
 
     def parse_events(self):
-        """Returns generator object for Messages
+        """Parses events in self.E.
 
-        :yield: (ticks, Message, Failed computer, Recovered computer) describing event
-        :rtype: (t, Message, F, R)
+        :yield: (Tick, Message, Failed computers, Recovered computers)
+        :rtype: (int, Message, [Computer], [Computer])
         """
-        # FIXME, skips 11 for some reason
-        current_t = self.E[0].split(" ")[0]
-        # Computers that fail this tick
-        F = []
-        # Computer that recover this tick
-        R = []
-        # Message that is sent during this tick
-        message = None
+        # Default dict with dict with keys m, RECOVER and FAIL
+        tick_dict = defaultdict(lambda: {"m": None, "RECOVER": [], "FAIL": []})
         for t, msg_type, target, value in map(lambda row: row.split(" "), self.E):
-            if current_t != t:
-                # Yield message for generator
-                yield int(current_t), message, F, R
-                current_t = t
-                # Computers that fail this tick
-                F = []
-                # Computer that recover this tick
-                R = []
-                # Message that is sent during this tick
-                message = None
-            # If the msg_type is PROPOSE, simply make a message
+            # Convert t from str to int
+            t = int(t)
+            # If the second argument equals "PROPOSE", it is a message
             if msg_type == "PROPOSE":
                 message = Message(
                     src="  ", dst=Proposer.props[int(target) - 1], type_="PROPOSE", value=value)
-
-            # If the msg_type is FAIL or RECOVER, check target for Proposer or Acceptor
+                # There can only be one Message per event, set m for that tick
+                tick_dict[t]["m"] = message
+            # If the msg_type is FAIL or RECOVER, a Computer either fails or recovers
             elif msg_type in ["FAIL", "RECOVER"]:
                 # If target is Proposer, grab the Proposer at index value-1
                 if target == "PROPOSER":
@@ -60,26 +52,26 @@ class Simulation:
                 else:
                     print("Invalid target")
                     pass
-
-                if msg_type == "FAIL":
-                    F.append(c)
-                elif msg_type == "RECOVER":
-                    R.append(c)
+                # Multiple Computers can FAIL or RECOVER each event. Append c to list based on msg_type (FAIL or RECOVER)
+                tick_dict[t][msg_type].append(c)
             else:
                 print("Invalid message type")
                 pass
-            
-        yield int(current_t), message, F, R
+        
+        tick_iterator = sorted(tick_dict.items(), key=lambda x: x[0])
+        for tick, values in tick_iterator:
+            yield int(tick), values["m"], values["FAIL"], values["RECOVER"]
 
     def run(self):
-        """[summary]
-        """
+        """Runs Paxos simulation."""
+        # Make parse_events generator object
         events = self.parse_events()
+        # Set exit condition to False
         events_empty = False
+        # Get first scripted event
         tick, m, F, R = next(events)
 
-        
-        print(list(self.parse_events()))
+        # Loop through range(self.tmax) until events is empty and network is empty
         for t in range(self.tmax):
             if events_empty and self.network.is_empty():
                 # If events_empty is true, and the queue is empty, exit simulation
@@ -87,12 +79,13 @@ class Simulation:
                 return
 
             if t != tick:
-                m = self.network.extract_message()
-                if m:
-                    print(f"{t:03}: {m}")
-                    Computer.deliver_message(m.dst, m)
+                # Attempt to extract and deliver message from queue
+                extracted_m = self.network.extract_message()
+                if extracted_m:
+                    print(f"{t:03}: {extracted_m}")
+                    Computer.deliver_message(extracted_m.dst, extracted_m)
                 else:
-                    # print(f"{t:03}:")
+                    print(f"{t:03}:")
                     pass
             else:
                 # Fail all computers that failed during this tick
@@ -103,17 +96,20 @@ class Simulation:
                 for c in R:
                     c.failed = False
                     print(f"{t:03}: ** {c} gerepareerd **")
-                
+
+                # If event has message, deliver message
                 if m:
                     print(f"{t:03}: {m}")
                     Computer.deliver_message(m.dst, m)
+                # Else, attempt to extract message from queue and deliver
                 else:
-                    m = self.network.extract_message()
-                    if m:
-                        print(f"{t:03}: {m}")
-                        Computer.deliver_message(m.dst, m)
+                    extracted_m = self.network.extract_message()
+                    if extracted_m:
+                        print(f"{t:03}: {extracted_m}")
+                        Computer.deliver_message(extracted_m.dst, extracted_m)
 
                 try:
+                    # Get next scripted event
                     tick, m, F, R = next(events)
                 except StopIteration:
                     # If the end of events is reached, set events_empty to True
