@@ -7,10 +7,11 @@ class Computer(object):
     acs = []
     props = []
 
-    def __init__(self, number, failed=False):
+    def __init__(self, number, network, failed=False):
         """Initialiser for Computer class."""
         self.number = number
         self.failed = failed
+        self.network = network
 
     def deliver_message(self, m: Message):
         """[summary]
@@ -48,6 +49,25 @@ class Proposer(Computer):
         super().__init__(*args, **kwargs)
         self.props.append(self)
 
+    def deliver_message(self, m: Message):
+        """[summary]
+
+        :param m: Message
+        :type m: Message
+        """
+        if m.type == "PROPOSE":
+            # 
+            pass
+        elif m.type == "PROMISE":
+            # 
+            pass
+        elif m.type == "ACCEPTED":
+            # 
+            pass
+        elif m.type == "REJECTED":
+            # 
+            pass
+
     def __str__(self):
         """__repr__ implementation for Proposer object.
 
@@ -73,6 +93,20 @@ class Acceptor(Computer):
         super().__init__(*args, **kwargs)
         self.acs.append(self)
         Proposer.acceptor_count += 1
+        self.prior = (None, None)
+
+    def deliver_message(self, m: Message):
+        """[summary]
+
+        :param m: Message
+        :type m: Message
+        """
+        if m.type == "PREPARE":
+            # 
+            pass
+        elif m.type == "ACCEPT":
+            # 
+            pass
 
     def __str__(self):
         """__repr__ implementation for Acceptor object.

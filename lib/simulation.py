@@ -28,16 +28,16 @@ class Simulation:
             tmax {[type]} -- [description]
             E {[type]} -- [description]
         """
+        self.network = Network()
+
         # Make n_p Proposers
-        self.P = [Proposer(i + 1) for i in range(n_p)]
+        self.P = [Proposer(i + 1, self.network) for i in range(n_p)]
         # Make n_a Acceptors
-        self.A = [Acceptor(i + 1) for i in range(n_a)]
+        self.A = [Acceptor(i + 1, self.network) for i in range(n_a)]
         # Simulation time limit
         self.tmax = tmax
         # IO stream or list of strings with events
         self.E = E
-
-        self.network = Network()
 
     def parse_events(self):
         """Parses events in self.E.
@@ -137,6 +137,6 @@ if __name__ == "__main__":
     sim1 = Simulation(n_a1, n_p1, tmax1, E1)
     sim1.run()
 
-    n_a2, n_p2, tmax2, E2 = from_text(r"test_input\02.txt")
-    sim2 = Simulation(n_a2, n_p2, tmax2, E2)
-    sim2.run()
+    # n_a2, n_p2, tmax2, E2 = from_text(r"test_input\02.txt")
+    # sim2 = Simulation(n_a2, n_p2, tmax2, E2)
+    # sim2.run()
