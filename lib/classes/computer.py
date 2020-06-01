@@ -57,19 +57,19 @@ class Proposer(Computer):
         :type m: Message
         """
         if m.type == "PROPOSE":
-            # 
+            # The proposer gets a propose message
             self.value = m.value
             for accept_dest in self.acs:
                 self.network.queue_message(Message(self, accept_dest, "PREPARE"))
 
         elif m.type == "PROMISE":
-            # 
+            # The proposer gets a promise message
             self.network.queue_message(Message(self, m.src, "ACCEPT", value=self.value))
         elif m.type == "ACCEPTED":
-            # 
+            # The proposer gets an accepted message
             pass
         elif m.type == "REJECTED":
-            # 
+            # The proposer gets a rejected message
             pass
 
     def __str__(self):
@@ -106,14 +106,16 @@ class Acceptor(Computer):
         :type m: Message
         """
         if m.type == "PREPARE":
-            # 
+            # The acceptor gets a prepare message
             #TODO add check for prior
             self.network.queue_message(Message(self, m.src, "PROMISE"))
         elif m.type == "ACCEPT":
-            # 
+            # The acceptor gets an accept message
             if 1:
                 # TODO check for correct n
                 self.network.queue_message(Message(self, m.src, "ACCEPTED", value=m.value))
+                # update prior value
+
             else:
                 self.network.queue_message(Message(self, m.src, "REJECTED"))
 
