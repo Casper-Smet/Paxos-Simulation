@@ -91,7 +91,12 @@ class Simulation:
         for t in range(self.tmax):
             if events_empty and self.network.is_empty():
                 # If events_empty is true, and the queue is empty, exit simulation
-                # TODO add necessary prints here
+                print("\n")
+                for P in Computer.props:
+                    if P.has_consensus:
+                        print(f"{P} heeft wel consensus (voorgesteld: {P.proposed_value}, geaccepteerd: {P.value})")
+                    else:
+                        print(f"{P} heeft geen consensus.")
                 return
 
             if t != tick:
