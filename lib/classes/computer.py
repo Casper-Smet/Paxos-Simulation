@@ -43,12 +43,19 @@ class Proposer(Computer):
 
     proposal_count = 1
     acceptor_count = 0
+    next_n = 1
 
     def __init__(self, *args, **kwargs):
         """Initialiser for Proposer class."""
         super().__init__(*args, **kwargs)
         self.props.append(self)
         self.value = None
+        self.n = None
+
+    def get_next_n(self):
+        self.n = Proposer.next_n
+        Proposer.next_n += 1
+        return self.n
 
     def deliver_message(self, m: Message):
         """[summary]
@@ -59,12 +66,13 @@ class Proposer(Computer):
         if m.type == "PROPOSE":
             # The proposer gets a propose message
             self.value = m.value
+            n = self.get_next_n()
             for accept_dest in self.acs:
-                self.network.queue_message(Message(self, accept_dest, "PREPARE", 14))
+                self.network.queue_message(Message(self, accept_dest, "PREPARE", n=n))
 
         elif m.type == "PROMISE":
             # The proposer gets a promise message
-            self.network.queue_message(Message(self, m.src, "ACCEPT", 14, value=self.value))
+            self.network.queue_message(Message(self, m.src, "ACCEPT", m.n, value=self.value))
         elif m.type == "ACCEPTED":
             # The proposer gets an accepted message
             pass
@@ -108,16 +116,16 @@ class Acceptor(Computer):
         if m.type == "PREPARE":
             # The acceptor gets a prepare message
             #TODO add check for prior
-            self.network.queue_message(Message(self, m.src, "PROMISE", 14))
+            self.network.queue_message(Message(self, m.src, "PROMISE", m.n))
         elif m.type == "ACCEPT":
             # The acceptor gets an accept message
             if 1:
                 # TODO check for correct n
-                self.network.queue_message(Message(self, m.src, "ACCEPTED", 14, value=m.value))
+                self.network.queue_message(Message(self, m.src, "ACCEPTED", m.n, value=m.value))
                 # update prior value
 
             else:
-                self.network.queue_message(Message(self, m.src, "REJECTED", 14))
+                self.network.queue_message(Message(self, m.src, "REJECTED", m.n))
 
     def __str__(self):
         """__repr__ implementation for Acceptor object.
