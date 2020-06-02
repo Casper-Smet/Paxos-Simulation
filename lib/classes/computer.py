@@ -79,11 +79,18 @@ class Proposer(Computer):
                 self.value = m.prior[1]
             self.network.queue_message(Message(self, m.src, "ACCEPT", m.n, value=self.value))
         elif m.type == "ACCEPTED":
+            # Adds 1 to accepted_count
             self.accepted_count += 1
+            # Checks if Proposer has reached consensus
+            # TODO More than half / half the votes, which one?
             self.has_consensus = self.accepted_count > Proposer.acceptor_count // 2
         elif m.type == "REJECTED":
+            # Adds 1 to rejected_count
             self.rejected_count += 1
+            # TODO More than half / half the votes, which one?
+            # Checks if Proposer has been rejected
             if self.rejected_count > Proposer.acceptor_count // 2:
+                # If Proposer has been rejected, queue new PREPARE messages
                 n = self.get_next_n()
                 for accept_dest in self.acs:
                     self.network.queue_message(Message(self, accept_dest, "PREPARE", n=n))
