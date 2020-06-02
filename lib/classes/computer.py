@@ -190,6 +190,11 @@ class Learner(Computer):
         if m.type == "SUCCES":
             # The learner gets a SUCCES message
             pass
+    
+    def predict_next(self):
+        """[summary]
+        """
+        pass
 
     def __str__(self):
         """__repr__ implementation for Acceptor object.
@@ -197,7 +202,7 @@ class Learner(Computer):
         :return: Text representation of Acceptor object
         :rtype: string
         """
-        return "A" + super().__str__()
+        return "L" + super().__str__()
 
     def __repr__(self):
         """__repr__ implementation for Acceptor object.
@@ -205,4 +210,4 @@ class Learner(Computer):
         :return: Text representation of Acceptor object
         :rtype: string
         """
-        return "A" + super().__str__()
+        return "L" + super().__str__()
