@@ -9,7 +9,7 @@ class Message(object):
              "REJECTED",
              ]
 
-    def __init__(self, src, dst, type_, n=None, value=None):
+    def __init__(self, src, dst, type_, n=None, value=None, prior=None):
         """Init for Message class.
 
         :param src: [description]
@@ -27,6 +27,7 @@ class Message(object):
         self.type = type_
         self.n = n
         self.value = value
+        self.prior = prior
 
     def __repr__(self):
         """__repr__ implementation for Message object.
@@ -43,8 +44,10 @@ class Message(object):
             if self.type in ["ACCEPT", "ACCEPTED"]:
                 return_str += f" v={self.value}"
             elif self.type == "PROMISE":
-                #TODO add prior to print statement
-                return_str += f" (Prior: n={self.n}, v={self.value})"
+                if self.prior:
+                    return_str += f" (Prior: n={self.prior[0]}, v={self.prior[1]})"
+                else:
+                    return_str += f" (Prior: None)"
         return return_str
 
     def __str__(self):
@@ -61,6 +64,8 @@ class Message(object):
             if self.type in ["ACCEPT", "ACCEPTED"]:
                 return_str += f" v={self.value}"
             elif self.type == "PROMISE":
-                #TODO add prior to print statement
-                return_str += f" (Prior: n={self.n}, v={self.value})"
+                if self.prior:
+                    return_str += f" (Prior: n={self.prior[0]}, v={self.prior[1]})"
+                else:
+                    return_str += f" (Prior: None)"
         return return_str
