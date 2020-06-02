@@ -51,6 +51,8 @@ class Proposer(Computer):
         self.props.append(self)
         self.value = None
         self.n = None
+        self.accepted_count = 0
+        self.rejected_count = 0
 
     def get_next_n(self):
         self.n = Proposer.next_n
@@ -77,8 +79,12 @@ class Proposer(Computer):
             # The proposer gets an accepted message
             pass
         elif m.type == "REJECTED":
-            # The proposer gets a rejected message
-            pass
+            self.rejected_count += 1
+            if self.rejected_count > Proposer.acceptor_count // 2:
+                n = self.get_next_n()
+                for accept_dest in self.acs:
+                    self.network.queue_message(Message(self, accept_dest, "PREPARE", n=n))
+
 
     def __str__(self):
         """__repr__ implementation for Proposer object.
@@ -105,7 +111,8 @@ class Acceptor(Computer):
         super().__init__(*args, **kwargs)
         self.acs.append(self)
         Proposer.acceptor_count += 1
-        self.prior = (None, None)
+        # TODO We should change this from a tuple to two seperate values
+        self.prior = (0, 0)
 
     def deliver_message(self, m: Message):
         """[summary]
@@ -114,16 +121,18 @@ class Acceptor(Computer):
         :type m: Message
         """
         if m.type == "PREPARE":
-            # The acceptor gets a prepare message
-            #TODO add check for prior
-            self.network.queue_message(Message(self, m.src, "PROMISE", m.n))
+            # The acceptor gets a PREPARE message
+            # If the n saved in prior is smaller than that of the message, send a PROMISE
+            if self.prior[0] < m.n:
+                # TODO value passing (line 015 and 018 of output for example 2)
+                self.network.queue_message(Message(self, m.src, "PROMISE", m.n))
         elif m.type == "ACCEPT":
-            # The acceptor gets an accept message
-            if 1:
-                # TODO check for correct n
+            # The acceptor gets an ACCEPT message
+            # If the n saved in prior is smaller than that of the message, send a PROMISE
+            if self.prior[0] < m.n:
                 self.network.queue_message(Message(self, m.src, "ACCEPTED", m.n, value=m.value))
                 # update prior value
-
+                self.prior = (m.n, m.value)
             else:
                 self.network.queue_message(Message(self, m.src, "REJECTED", m.n))
 
