@@ -74,6 +74,7 @@ class Proposer(Computer):
 
         elif m.type == "PROMISE":
             # The proposer gets a promise message
+            # TODO check for prior
             self.network.queue_message(Message(self, m.src, "ACCEPT", m.n, value=self.value))
         elif m.type == "ACCEPTED":
             # The proposer gets an accepted message
@@ -84,8 +85,7 @@ class Proposer(Computer):
                 n = self.get_next_n()
                 for accept_dest in self.acs:
                     self.network.queue_message(Message(self, accept_dest, "PREPARE", n=n))
-
-
+            # TODO reset accepted_count and rejected_count
     def __str__(self):
         """__repr__ implementation for Proposer object.
 
@@ -112,7 +112,7 @@ class Acceptor(Computer):
         self.acs.append(self)
         Proposer.acceptor_count += 1
         # TODO We should change this from a tuple to two seperate values
-        self.prior = (0, 0)
+        self.prior = (0, None)
 
     def deliver_message(self, m: Message):
         """[summary]
@@ -124,8 +124,11 @@ class Acceptor(Computer):
             # The acceptor gets a PREPARE message
             # If the n saved in prior is smaller than that of the message, send a PROMISE
             if self.prior[0] < m.n:
-                # TODO value passing (line 015 and 018 of output for example 2)
-                self.network.queue_message(Message(self, m.src, "PROMISE", m.n))
+                if self.prior[1]:
+                    self.network.queue_message(Message(src=self, dst=m.src, type_="PROMISE", n=m.n, prior=self.prior))
+                else:
+                    self.network.queue_message(Message(self, m.src, "PROMISE", m.n))
+                
         elif m.type == "ACCEPT":
             # The acceptor gets an ACCEPT message
             # If the n saved in prior is smaller than that of the message, send a PROMISE
