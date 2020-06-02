@@ -6,6 +6,7 @@ class Computer(object):
 
     acs = []
     props = []
+    lears = []
 
     def __init__(self, number, network, failed=False):
         """Initialiser for Computer class."""
@@ -43,6 +44,7 @@ class Proposer(Computer):
 
     proposal_count = 1
     acceptor_count = 0
+    learner_count = 0
     next_n = 1
 
     def __init__(self, *args, **kwargs):
@@ -151,6 +153,40 @@ class Acceptor(Computer):
                 self.prior = (m.n, m.value)
             else:
                 self.network.queue_message(Message(self, m.src, "REJECTED", m.n))
+
+    def __str__(self):
+        """__repr__ implementation for Acceptor object.
+
+        :return: Text representation of Acceptor object
+        :rtype: string
+        """
+        return "A" + super().__str__()
+
+    def __repr__(self):
+        """__repr__ implementation for Acceptor object.
+
+        :return: Text representation of Acceptor object
+        :rtype: string
+        """
+        return "A" + super().__str__()
+
+
+class Learner(Computer):
+    """Learner class for Paxos simulation. Inherits Computer class."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialiser for Learner class."""
+        super().__init__(*args, **kwargs)
+        self.lears.append(self)
+        Proposer.learner_count += 1
+
+    def deliver_message(self, m: Message):
+        """[summary]
+
+        :param m: Message
+        :type m: Message
+        """
+        pass
 
     def __str__(self):
         """__repr__ implementation for Acceptor object.
