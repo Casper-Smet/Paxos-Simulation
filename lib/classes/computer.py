@@ -79,8 +79,8 @@ class Proposer(Computer):
                 self.value = m.prior[1]
             self.network.queue_message(Message(self, m.src, "ACCEPT", m.n, value=self.value))
         elif m.type == "ACCEPTED":
-            # The proposer gets an accepted message
-            pass
+            self.accepted_count += 1
+            self.has_consensus = self.accepted_count > Proposer.acceptor_count // 2
         elif m.type == "REJECTED":
             self.rejected_count += 1
             if self.rejected_count > Proposer.acceptor_count // 2:
