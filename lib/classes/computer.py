@@ -53,6 +53,7 @@ class Proposer(Computer):
         self.n = None
         self.accepted_count = 0
         self.rejected_count = 0
+        self.has_consensus = False
 
     def get_next_n(self):
         self.n = Proposer.next_n
@@ -74,7 +75,8 @@ class Proposer(Computer):
 
         elif m.type == "PROMISE":
             # The proposer gets a promise message
-            # TODO check for prior
+            if m.prior:
+                self.value = m.prior[1]
             self.network.queue_message(Message(self, m.src, "ACCEPT", m.n, value=self.value))
         elif m.type == "ACCEPTED":
             # The proposer gets an accepted message
