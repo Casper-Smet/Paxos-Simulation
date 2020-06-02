@@ -1,5 +1,5 @@
 from collections import defaultdict
-from classes.computer import Acceptor, Computer, Proposer, Network, Message
+from classes.computer import Acceptor, Computer, Proposer, Learner, Network, Message
 
 
 def from_text(fp: str):
@@ -7,8 +7,8 @@ def from_text(fp: str):
 
     :param fp: Filepath
     :type fp: str
-    :return: n_p, n_a, tmax, E
-    :rtype: (int, int, int, list)
+    :return: n_p, n_a, n_l, tmax, E
+    :rtype: (int, int, int, int, list)
     """
     with open(fp, "r") as file:
         lines = [line.strip() for line in file]
@@ -16,19 +16,20 @@ def from_text(fp: str):
     last_line = lines.pop()
     assert last_line == "0 END", f"ERROR: test file {fp} should end with '0 END'"
 
-    n_p, n_a, tmax = lines.pop(0).split(" ")
+    n_p, n_a, n_l, tmax = lines.pop(0).split(" ")
 
-    return int(n_p), int(n_a), int(tmax), lines
+    return int(n_p), int(n_a), int(n_l), int(tmax), lines
 
 
 class Simulation:
 
-    def __init__(self, n_p: int, n_a: int, tmax: int, E: list):
+    def __init__(self, n_p: int, n_a: int, n_l: int, tmax: int, E: list):
         """[summary]
 
         Arguments:
             n_p {[type]} -- [description]
             n_a {[type]} -- [description]
+            n_l {[type]} -- [description]
             tmax {[type]} -- [description]
             E {[type]} -- [description]
         """
@@ -38,6 +39,8 @@ class Simulation:
         self.P = [Proposer(i + 1, self.network) for i in range(n_p)]
         # Make n_a Acceptors
         self.A = [Acceptor(i + 1, self.network) for i in range(n_a)]
+        # Make n_a Acceptors
+        self.L = [Learner(i + 1, self.network) for i in range(n_l)]
         # Simulation time limit
         self.tmax = tmax
         # IO stream or list of strings with events
@@ -146,6 +149,10 @@ if __name__ == "__main__":
     # sim1 = Simulation(n_a1, n_p1, tmax1, E1)
     # sim1.run()
 
-    n_a2, n_p2, tmax2, E2 = from_text(r"test_input\02.txt")
-    sim2 = Simulation(n_a2, n_p2, tmax2, E2)
-    sim2.run()
+    # n_a2, n_p2, tmax2, E2 = from_text(r"test_input\02.txt")
+    # sim2 = Simulation(n_a2, n_p2, tmax2, E2)
+    # sim2.run()
+
+    n_a3, n_p3, n_l3, tmax3, E3 = from_text(r"test_input\03.txt")
+    sim3 = Simulation(n_a3, n_p3, n_l3, tmax3, E3)
+    sim3.run()

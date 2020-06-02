@@ -179,6 +179,7 @@ class Learner(Computer):
         super().__init__(*args, **kwargs)
         self.lears.append(self)
         Proposer.learner_count += 1
+        self.learned_value = None
 
     def deliver_message(self, m: Message):
         """[summary]
@@ -186,7 +187,9 @@ class Learner(Computer):
         :param m: Message
         :type m: Message
         """
-        pass
+        if m.type == "SUCCES":
+            # The learner gets a SUCCES message
+            pass
 
     def __str__(self):
         """__repr__ implementation for Acceptor object.
