@@ -87,7 +87,9 @@ class Proposer(Computer):
                 n = self.get_next_n()
                 for accept_dest in self.acs:
                     self.network.queue_message(Message(self, accept_dest, "PREPARE", n=n))
-            # TODO reset accepted_count and rejected_count
+                self.accepted_count = 0
+                self.rejected_count = 0
+
     def __str__(self):
         """__repr__ implementation for Proposer object.
 
