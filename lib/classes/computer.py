@@ -49,6 +49,7 @@ class Proposer(Computer):
         """Initialiser for Proposer class."""
         super().__init__(*args, **kwargs)
         self.props.append(self)
+        self.proposed_value = None
         self.value = None
         self.n = None
         self.accepted_count = 0
@@ -69,6 +70,7 @@ class Proposer(Computer):
         if m.type == "PROPOSE":
             # The proposer gets a propose message
             self.value = m.value
+            self.proposed_value = self.value
             n = self.get_next_n()
             for accept_dest in self.acs:
                 self.network.queue_message(Message(self, accept_dest, "PREPARE", n=n))
