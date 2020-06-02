@@ -13,8 +13,12 @@ def from_text(fp: str):
     with open(fp, "r") as file:
         lines = [line.strip() for line in file]
 
+    last_line = lines.pop()
+    assert last_line == "0 END", f"ERROR: test file {fp} should end with '0 END'"
+
     n_p, n_a, tmax = lines.pop(0).split(" ")
-    return int(n_p), int(n_a), int(tmax), lines[:-1]
+
+    return int(n_p), int(n_a), int(tmax), lines
 
 
 class Simulation:
