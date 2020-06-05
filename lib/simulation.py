@@ -94,6 +94,9 @@ class Simulation:
         # Get first scripted event
         tick, m, F, R = next(events)
 
+        # Padding
+        p = len(str(self.tmax))
+
         # Loop through range(self.tmax) until events is empty and network is empty
         for t in range(self.tmax):
             if events_empty and self.network.is_empty():
@@ -110,30 +113,30 @@ class Simulation:
                 # Attempt to extract and deliver message from queue
                 extracted_m = self.network.extract_message()
                 if extracted_m:
-                    print(f"{t:03}: {extracted_m}")
+                    print(f"{t:0{p}}: {extracted_m}")
                     extracted_m.dst.deliver_message(extracted_m)
                 else:
-                    print(f"{t:03}:")
+                    print(f"{t:0{p}}:")
                     pass
             else:
                 # Fail all computers that failed during this tick
                 for c in F:
                     c.failed = True
-                    print(f"{t:03}: ** {c} kapot **")
+                    print(f"{t:0{p}}: ** {c} kapot **")
                 # Recover all computers that recovered during this tick
                 for c in R:
                     c.failed = False
-                    print(f"{t:03}: ** {c} gerepareerd **")
+                    print(f"{t:0{p}}: ** {c} gerepareerd **")
 
                 # If event has message, deliver message
                 if m:
-                    print(f"{t:03}: {m}")
+                    print(f"{t:0{p}}: {m}")
                     m.dst.deliver_message(m)
                 # Else, attempt to extract message from queue and deliver
                 else:
                     extracted_m = self.network.extract_message()
                     if extracted_m:
-                        print(f"{t:03}: {extracted_m}")
+                        print(f"{t:0{p}}: {extracted_m}")
                         extracted_m.dst.deliver_message(extracted_m)
 
                 try:
