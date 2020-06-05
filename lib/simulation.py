@@ -1,5 +1,5 @@
 from collections import defaultdict
-from classes.computer import Acceptor, Computer, Proposer, Learner, Network, Message
+from classes.computer import Acceptor, Client, Computer, Proposer, Learner, Network, Message
 
 
 def from_text(fp: str):
@@ -61,7 +61,7 @@ class Simulation:
             # If the second argument equals "PROPOSE", it is a message
             if msg_type == "PROPOSE":
                 message = Message(
-                    src="  ", dst=Proposer.props[int(target) - 1], type_="PROPOSE", value=value)
+                    src=Client(), dst=Proposer.props[int(target) - 1], type_="PROPOSE", value=value)
                 # There can only be one Message per event, set m for that tick
                 tick_dict[t]["m"] = message
             # If the msg_type is FAIL or RECOVER, a Computer either fails or recovers
