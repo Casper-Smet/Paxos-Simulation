@@ -1,12 +1,13 @@
 class Message(object):
     """Message class for Paxos simulation."""
-
     types = ["PROPOSE",
              "PREPARE",
              "PROMISE",
              "ACCEPT",
              "ACCEPTED",
              "REJECTED",
+             "SUCCES",
+             "PREDICTED"
              ]
 
     def __init__(self, src, dst, type_, n=None, value=None, prior=None):
@@ -39,9 +40,11 @@ class Message(object):
         return_str = f"{self.src} -> {self.dst} {self.type}"
         if self.type in "PROPOSE":
             return_str += f" v={self.value}"
+        elif self.type in "PREDICTED":
+            return_str += f" n={self.value}"
         else:
             return_str += f" n={self.n}"
-            if self.type in ["ACCEPT", "ACCEPTED"]:
+            if self.type in ["ACCEPT", "ACCEPTED", "SUCCES"]:
                 return_str += f" v={self.value}"
             elif self.type == "PROMISE":
                 if self.prior:
@@ -59,9 +62,11 @@ class Message(object):
         return_str = f"{self.src} -> {self.dst} {self.type}"
         if self.type in "PROPOSE":
             return_str += f" v={self.value}"
+        elif self.type in "PREDICTED":
+            return_str += f" n={self.value}"
         else:
             return_str += f" n={self.n}"
-            if self.type in ["ACCEPT", "ACCEPTED"]:
+            if self.type in ["ACCEPT", "ACCEPTED", "SUCCES"]:
                 return_str += f" v={self.value}"
             elif self.type == "PROMISE":
                 if self.prior:
