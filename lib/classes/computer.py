@@ -38,6 +38,27 @@ class Computer(object):
         """
         return f"{self.number}"
 
+class Client(Computer):
+    """Client class for Paxos simulation. Represents outside world. Inherits Computer Class"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(number=0, network=None, *args, **kwargs)
+
+    def __str__(self):
+        """__str__ implementation for Proposer object.
+
+        :return: Text representation of Proposer object
+        :rtype: string
+        """
+        return "  "
+
+    def __repr__(self):
+        """__repr__ implementation for Proposer object.
+
+        :return: Text representation of Proposer object
+        :rtype: string
+        """
+        return "  "
+
 
 class Proposer(Computer):
     """Proposer class for Paxos simulation. Inherits Computer class."""
@@ -82,16 +103,19 @@ class Proposer(Computer):
             if m.prior:
                 self.value = m.prior[1]
             self.network.queue_message(Message(self, m.src, "ACCEPT", m.n, value=self.value))
-        elif m.type == "ACCEPTED":
+        elif m.type == "ACCEPTED" and not self.has_consensus:
             # Adds 1 to accepted_count
             self.accepted_count += 1
             # Checks if Proposer has reached consensus
-            # TODO More than half / half the votes, which one?
             self.has_consensus = self.accepted_count > Proposer.acceptor_count // 2
+            if self.has_consensus:
+                # Send a SUCCES message to all learners
+                for l in Computer.lears:
+                    self.network.queue_message(Message(self, l, "SUCCES", m.n, m.value))
+
         elif m.type == "REJECTED":
             # Adds 1 to rejected_count
             self.rejected_count += 1
-            # TODO More than half / half the votes, which one?
             # Checks if Proposer has been rejected
             if self.rejected_count > Proposer.acceptor_count // 2:
                 # If Proposer has been rejected, queue new PREPARE messages
@@ -148,6 +172,7 @@ class Acceptor(Computer):
             # The acceptor gets an ACCEPT message
             # If the n saved in prior is smaller than that of the message, send a PROMISE
             if self.prior[0] < m.n:
+                # Send an ACCEPTED message to proposer
                 self.network.queue_message(Message(self, m.src, "ACCEPTED", m.n, value=m.value))
                 # update prior value
                 self.prior = (m.n, m.value)
@@ -179,7 +204,10 @@ class Learner(Computer):
         super().__init__(*args, **kwargs)
         self.lears.append(self)
         Proposer.learner_count += 1
+        self.has_predicted = False
         self.learned_value = None
+        self.predicted_value = None
+        self.predict_function = None
 
     def deliver_message(self, m: Message):
         """[summary]
@@ -187,14 +215,18 @@ class Learner(Computer):
         :param m: Message
         :type m: Message
         """
-        if m.type == "SUCCES":
+        if m.type == "SUCCES" and not self.has_predicted:
             # The learner gets a SUCCES message
-            pass
+            self.learned_value = m.value
+            self.predicted_value = self.predict_next()
+            self.network.queue_message(Message(self, dst=Client(), type_="PREDICTED",value=self.predicted_value))
+            self.has_predicted = True
     
     def predict_next(self):
         """[summary]
         """
-        pass
+        prediction = "PLACEHOLDER"
+        return prediction
 
     def __str__(self):
         """__repr__ implementation for Acceptor object.
