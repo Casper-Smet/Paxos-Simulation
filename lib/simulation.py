@@ -11,7 +11,7 @@ def from_text(fp: str):
     :rtype: (int, int, int, int, list)
     """
     with open(fp, "r") as file:
-        lines = [line.strip() for line in file]
+        lines = [line.strip() for line in file if not line.startswith("#")]
 
     last_line = lines.pop()
     assert last_line == "0 END", f"ERROR: test file {fp} should end with '0 END'"
