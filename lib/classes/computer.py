@@ -43,6 +43,15 @@ class Client(Computer):
     def __init__(self, *args, **kwargs):
         super().__init__(number=0, network=None, *args, **kwargs)
     
+    def deliver_message(self, m: Message):
+        """When a new value has been predicted reset all the acceptors for the next round.
+
+        Args:
+            m (Message): [description]
+        """
+        if m.type == "PREDICTED":
+            self.reset_acceptors()
+    
     def reset_acceptors(self):
         """Resets all the priors of the acceptors."""
         for acceptor in self.acs:
