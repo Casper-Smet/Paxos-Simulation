@@ -1,10 +1,21 @@
-1 3 1 100 
-0 PROPOSE 1 8
-10 PROPOSE 1 61
-20 PROPOSE 1 90
-30 PROPOSE 1 64
-40 PROPOSE 1 17
-50 PROPOSE 1 8
-60 PROPOSE 1 78
-70 PROPOSE 1 62
+# We changed the input somewhat:
+# Instead of passing "yesterday", pass "day from epoch"
+# We also spaced apart the predictions more, to fit our simulation better
+1 3 1 1000
+# First day to predict in file; originally: 0 PROPOSE 1 8
+0 PROPOSE 1 0
+# Second day to predict in file; originally: 20 PROPOSE 1 61
+20 PROPOSE 1 1
+# Third day to predict in file; originally: 40 PROPOSE 1 90
+40 PROPOSE 1 2
+# Fourth day to predict in file; originally: 60 PROPOSE 1 64
+60 PROPOSE 1 3
+# Fifth day to predict in file; originally: 80 PROPOSE 1 17
+80 PROPOSE 1 4
+# Sixth day to predict in file; originally: 100 PROPOSE 1 8
+100 PROPOSE 1 5
+# Seventh day to predict in file; originally: 120 PROPOSE 1 78
+120 PROPOSE 1 6
+# Eighth day to predict in file; originally: 140 PROPOSE 1 62
+140 PROPOSE 1 7
 0 END
