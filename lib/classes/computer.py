@@ -42,6 +42,11 @@ class Client(Computer):
     """Client class for Paxos simulation. Represents outside world. Inherits Computer Class"""
     def __init__(self, *args, **kwargs):
         super().__init__(number=0, network=None, *args, **kwargs)
+    
+    def reset_acceptors(self):
+        """Resets all the priors of the acceptors."""
+        for acceptor in self.acs:
+            acceptor.prior = (0, None)
 
     def __str__(self):
         """__str__ implementation for Proposer object.
@@ -85,7 +90,7 @@ class Proposer(Computer):
         return self.n
 
     def deliver_message(self, m: Message):
-        """[summary]
+        """Takes a message and acts accordingly based on the type of the message.
 
         :param m: Message
         :type m: Message
@@ -150,11 +155,10 @@ class Acceptor(Computer):
         super().__init__(*args, **kwargs)
         self.acs.append(self)
         Proposer.acceptor_count += 1
-        # TODO We should change this from a tuple to two seperate values
         self.prior = (0, None)
 
     def deliver_message(self, m: Message):
-        """[summary]
+        """Takes a message and acts accordingly based on the type of the message.
 
         :param m: Message
         :type m: Message
@@ -210,7 +214,7 @@ class Learner(Computer):
         self.predict_function = None
 
     def deliver_message(self, m: Message):
-        """[summary]
+        """Takes a message and acts accordingly based on the type of the message.
 
         :param m: Message
         :type m: Message
@@ -223,8 +227,7 @@ class Learner(Computer):
             self.has_predicted = True
     
     def predict_next(self):
-        """[summary]
-        """
+        """Make a prediction based on the accepted value."""
         prediction = "PLACEHOLDER"
         return prediction
 
