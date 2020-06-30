@@ -1,5 +1,32 @@
 from classes.network import Message, Network
 
+from sklearn.tree import DecisionTreeRegressor
+import pandas as pd
+
+
+def load_data():
+    """loads_data"""
+    df = pd.read_pickle("test_input/train.pkl")
+    df["yesterday"] = df["count"].shift(1, fill_value=0)
+    df = df.drop(0)
+    return df
+
+
+def load_predictor(df=load_data()):
+    """Loads predictor"""
+    X_train = df.drop(["date", "count"], axis=1)
+    y_train = df["count"]
+
+    tree = DecisionTreeRegressor()
+    tree.fit(X_train, y_train)
+
+    def predict(day):
+        row = X_train.iloc[[day]]
+        print(row)
+        return tree.predict(row)[0]
+
+    return predict
+
 
 class Computer(object):
     """Computer class for Paxos simulation."""
@@ -37,6 +64,7 @@ class Computer(object):
         :rtype: string
         """
         return f"{self.number}"
+
 
 class Client(Computer):
     """Client class for Paxos simulation. Represents outside world. Inherits Computer Class"""
@@ -199,15 +227,15 @@ class Acceptor(Computer):
 class Learner(Computer):
     """Learner class for Paxos simulation. Inherits Computer class."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, number, network, predict_function=load_predictor(), *args, **kwargs):
         """Initialiser for Learner class."""
-        super().__init__(*args, **kwargs)
+        super().__init__(network=network, number=number, *args, **kwargs)
         self.lears.append(self)
         Proposer.learner_count += 1
         self.has_predicted = False
         self.learned_value = None
         self.predicted_value = None
-        self.predict_function = None
+        self.predict_function = predict_function
 
     def deliver_message(self, m: Message):
         """[summary]
@@ -218,15 +246,9 @@ class Learner(Computer):
         if m.type == "SUCCES" and not self.has_predicted:
             # The learner gets a SUCCES message
             self.learned_value = m.value
-            self.predicted_value = self.predict_next()
-            self.network.queue_message(Message(self, dst=Client(), type_="PREDICTED",value=self.predicted_value))
+            self.predicted_value = self.predict_function(self.learned_value)
+            self.network.queue_message(Message(self, dst=Client(), type_="PREDICTED", value=self.predicted_value))
             self.has_predicted = True
-    
-    def predict_next(self):
-        """[summary]
-        """
-        prediction = "PLACEHOLDER"
-        return prediction
 
     def __str__(self):
         """__repr__ implementation for Acceptor object.
