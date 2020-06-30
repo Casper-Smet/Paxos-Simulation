@@ -22,7 +22,6 @@ def load_predictor(df=load_data()):
 
     def predict(day):
         row = X_train.iloc[[day]]
-        print(row)
         return tree.predict(row)[0]
 
     return predict
@@ -157,6 +156,8 @@ class Proposer(Computer):
                 # Send a SUCCES message to all learners
                 for l in Computer.lears:
                     self.network.queue_message(Message(self, l, "SUCCES", m.n, m.value))
+                self.accepted_count = 0
+                self.has_consensus = False
 
         elif m.type == "REJECTED":
             # Adds 1 to rejected_count
