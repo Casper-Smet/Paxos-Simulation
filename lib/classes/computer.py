@@ -78,12 +78,15 @@ class Client(Computer):
             m (Message): [description]
         """
         if m.type == "PREDICTED":
-            self.reset_acceptors()
+            self.reset_round()
     
-    def reset_acceptors(self):
-        """Resets all the priors of the acceptors."""
+    def reset_round(self):
+        """Resets acceptors and learners for a new round."""
         for acceptor in self.acs:
             acceptor.prior = (0, None)
+
+        for learners in self.lears:
+            learners.has_predicted = False
 
     def __str__(self):
         """__str__ implementation for Proposer object.
