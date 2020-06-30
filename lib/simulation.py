@@ -156,6 +156,12 @@ if __name__ == "__main__":
     # sim2 = Simulation(n_a2, n_p2, tmax2, E2)
     # sim2.run()
 
-    n_a3, n_p3, n_l3, tmax3, E3 = from_text(r"test_input\03.txt")
-    sim3 = Simulation(n_a3, n_p3, n_l3, tmax3, E3)
-    sim3.run()
+    # n_a3, n_p3, n_l3, tmax3, E3 = from_text(r"test_input\03.txt")
+    # sim3 = Simulation(n_a3, n_p3, n_l3, tmax3, E3)
+    # sim3.run()
+
+    n_a4, n_p4, n_l4, tmax4, E4 = from_text(r"test_input\learn.txt")
+    sim_learn = Simulation(n_a4, n_p4, n_l4, tmax4, E4)
+    sim_learn.run()
+
+    
